@@ -45,14 +45,14 @@ class Request {
 	private static function request (string $url, $context) : array {
 		$response = @file_get_contents($url, FALSE, $context);
 		if (FALSE === $response)
-			throw new Exceptions\ConnError;
+			throw new Exceptions\ConnError($url);
 
 		$json = json_decode($response, TRUE);
 		if (NULL === $json)
-			throw new Exceptions\ServerError($response);
+			throw new Exceptions\ServerError($url, $response);
 
 		if ('error' == $json['status'])
-			throw new Exceptions\DataError($json['message'], $json['code']);
+			throw new Exceptions\DataError($url, $json['message'], $json['code']);
 
 		return $json['data'];
 	}
